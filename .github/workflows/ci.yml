@@ -3,27 +3,72 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'coverage.svg'
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write   # allow pushing the badge
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # fetch badges branch too (if it exists)
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r tests/requirements.txt
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          pytest -q
+          pytest --maxfail=1 -q --disable-warnings --cov=app --cov-report=term-missing --cov-report=xml
+
+      - name: Make badge
+        run: |
+          coverage-badge -o coverage.svg -f
+
+      - name: Publish badge to 'badges' branch
+        run: |
+          # Configure git author for CI
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Switch to (or create) badges branch
+          git fetch origin badges || true
+          if git show-ref --verify --quiet refs/heads/badges; then
+            git checkout badges
+          else
+            git checkout -b badges
+          fi
+
+          # Move the new badge into this branch root
+          mv -f coverage.svg coverage.svg
+
+          # Commit only if changed
+          git add coverage.svg
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update coverage badge"
+            git push origin badges
+          else
+            echo "No badge changes to publish."
+          fi
+
+      - name: Back to main (no-op)
+        if: always()
+        run: git checkout -
