@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Assessment #{{ a.id }}</h2>
+  <p><strong>Assessor:</strong> {{ a.assessor }} · <strong>Date:</strong> {{ (a.created_at or '').strftime('%Y-%m-%d') if a.created_at else '' }}</p>
+  <p><strong>Observation:</strong> {{ a.observation or '' }}</p>
+  <ul>
+    <li>RULA: {{ a.rula }}</li>
+    <li>REBA: {{ a.reba }}</li>
+    <li>NIOSH LI: {{ a.niosh_li }} (RWL {{ a.recommended_weight }} kg)</li>
+  </ul>
+  <p><strong>Risk:</strong> {{ a.risk_category }}</p>
+  <p>
+    <a class="btn" href="{{ url_for('assessments.print_assessment', assessment_id=a.id) }}" target="_blank">Printable Report</a>
+    <a class="btn" href="{{ url_for('assessments.export_pdf_single', assessment_id=a.id) }}" target="_blank">Export PDF</a>
+  </p>
+</div>
+<div class="card">
+  <h3>Media</h3>
+  {% if a.media %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
+      {% for m in a.media %}
+        {% if m.media_type == 'image' %}
+          <div>
+            <a href="{{ url_for('media.serve', filename=m.filename) }}" target="_blank">
+              <img src="{{ url_for('media.serve', filename=m.filename) }}" style="width:100%;height:140px;object-fit:cover;border:1px solid #e5e7eb;border-radius:8px;">
+            </a>
+            <div style="margin-top:6px">
+              <a class="btn" href="{{ url_for('media.annotate', media_id=m.id) }}">Annotate</a>
+            </div>
+          </div>
+        {% else %}
+          <video src="{{ url_for('media.serve', filename=m.filename) }}" controls style="width:100%;height:140px;object-fit:cover;border:1px solid #e5e7eb;border-radius:8px;"></video>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}<p>No media uploaded.</p>{% endif %}
+</div>
+{% endblock %}

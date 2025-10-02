@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block content %}
+<div class="card"><h2>New Job Role</h2>
+<form method="post">{{ form.csrf_token }}
+<p>{{ form.company_id.label }}<br>{{ form.company_id() }}</p>
+<p>{{ form.title.label }}<br>{{ form.title(size=50) }}</p>
+<p>{{ form.description.label }}<br>{{ form.description(rows=4, cols=60) }}</p>
+<p>{{ form.submit(class_='btn') }}</p>
+</form></div>{% endblock %}

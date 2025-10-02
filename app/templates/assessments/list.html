@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+    <h2>All Assessments</h2>
+    <div>
+      <a class="btn" href="{{ url_for('assessments.export_csv', **sel) }}">Export CSV</a>
+      <a class="btn" href="{{ url_for('assessments.export_pdf', **sel) }}">Export PDF</a>
+      <a class="btn" href="{{ url_for('assessments.new') }}">New Assessment</a>
+    </div>
+  </div>
+
+  <form id="filter-form" method="get" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:12px 0;">
+    <div>
+      <label>Company</label>
+      <select id="company-select" name="company_id" style="width:100%">
+        <option value="">All</option>
+        {% for c in companies %}
+          <option value="{{ c.id }}" {{ 'selected' if sel.company_id==c.id else '' }}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Job Role</label>
+      <select id="jobrole-select" name="jobrole_id" style="width:100%">
+        <option value="">All</option>
+        {% for jr in jobroles %}
+          <option value="{{ jr.id }}" {{ 'selected' if sel.jobrole_id==jr.id else '' }}>{{ jr.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>From</label>
+      <input type="date" name="date_from" value="{{ sel.date_from }}" style="width:100%">
+    </div>
+    <div>
+      <label>To</label>
+      <input type="date" name="date_to" value="{{ sel.date_to }}" style="width:100%">
+    </div>
+    <div>
+      <label>Risk</label>
+      <select name="risk" style="width:100%">
+        <option value="">All</option>
+        {% for r in ['Low','Medium','High'] %}
+          <option value="{{ r }}" {{ 'selected' if sel.risk==r else '' }}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div style="align-self:end">
+      <button class="btn" type="submit">Filter</button>
+      <a class="btn" href="{{ url_for('assessments.list_all') }}">Reset</a>
+    </div>
+  </form>
+
+  {% if rows %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Job Role</th>
+        <th>RULA</th>
+        <th>REBA</th>
+        <th>NIOSH LI</th>
+        <th>Risk</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.date }}</td>
+        <td>{{ r.job_title }}</td>
+        <td>{{ r.rula }}</td>
+        <td>{{ r.reba }}</td>
+        <td>{{ r.niosh_li }}</td>
+        <td>{{ r.risk }}</td>
+        <td><a class="btn" href="{{ url_for('assessments.view', assessment_id=r.id) }}">Open</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No assessments match your filters.</p>
+  {% endif %}
+</div>
+
+<script>
+const companySelect = document.getElementById('company-select');
+const jobroleSelect = document.getElementById('jobrole-select');
+async function loadJobRoles(companyId) {
+  const url = companyId ? `/api/jobroles?company_id=${companyId}` : '/api/jobroles';
+  const res = await fetch(url);
+  const data = await res.json();
+  const selected = new URLSearchParams(window.location.search).get('jobrole_id') || '';
+  jobroleSelect.innerHTML = '<option value="">All</option>';
+  data.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id; opt.textContent = r.title;
+    if (String(r.id) === String(selected)) opt.selected = true;
+    jobroleSelect.appendChild(opt);
+  });
+}
+companySelect.addEventListener('change', () => { loadJobRoles(companySelect.value); });
+if (companySelect.value) { loadJobRoles(companySelect.value); }
+</script>
+{% endblock %}

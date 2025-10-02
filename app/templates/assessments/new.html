@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% block content %}
+<div class="card"><h2>New Ergonomics Assessment</h2>
+<form method="post" enctype="multipart/form-data">{{ form.csrf_token }}
+<p>{{ form.jobrole_id.label }}<br>{{ form.jobrole_id() }}</p>
+<p>{{ form.observation.label }}<br>{{ form.observation(rows=3, cols=70) }}</p>
+<h3>RULA</h3>
+<div>{{ form.rula_upper_arm.label }} {{ form.rula_upper_arm(size=4) }} {{ form.rula_lower_arm_band.label }} {{ form.rula_lower_arm_band(size=4) }} {{ form.rula_wrist.label }} {{ form.rula_wrist(size=4) }} {{ form.rula_wrist_twist.label }} {{ form.rula_wrist_twist(size=4) }}</div>
+<div>{{ form.rula_neck.label }} {{ form.rula_neck(size=4) }} {{ form.rula_trunk.label }} {{ form.rula_trunk(size=4) }} {{ form.rula_legs.label }} {{ form.rula_legs(size=4) }}</div>
+<div>{{ form.rula_muscle_use.label }} {{ form.rula_muscle_use(size=4) }} {{ form.rula_force_load.label }} {{ form.rula_force_load(size=4) }}</div>
+<h3>REBA</h3>
+<div>{{ form.reba_trunk.label }} {{ form.reba_trunk(size=4) }} {{ form.reba_neck.label }} {{ form.reba_neck(size=4) }} {{ form.reba_legs.label }} {{ form.reba_legs(size=4) }}</div>
+<div>{{ form.reba_upper_arm.label }} {{ form.reba_upper_arm(size=4) }} {{ form.reba_lower_arm.label }} {{ form.reba_lower_arm(size=4) }} {{ form.reba_wrist.label }} {{ form.reba_wrist(size=4) }}</div>
+<div>{{ form.reba_coupling.label }} {{ form.reba_coupling(size=4) }} {{ form.reba_load.label }} {{ form.reba_load(size=4) }}</div>
+<div>{{ form.reba_activity_static.label }} {{ form.reba_activity_static(size=4) }} {{ form.reba_activity_repeat.label }} {{ form.reba_activity_repeat(size=4) }} {{ form.reba_activity_rapid.label }} {{ form.reba_activity_rapid(size=4) }}</div>
+<h3>NIOSH Lifting</h3>
+<div>{{ form.weight.label }} {{ form.weight() }} kg</div>
+<div>H {{ form.h() }} cm · V {{ form.v() }} cm · D {{ form.d() }} cm</div>
+<div>A {{ form.a() }}° · F {{ form.f() }} lifts/min · C {{ form.c() }}</div>
+<h3>Evidence</h3>
+<input type="file" name="media" multiple accept="image/*,video/*">
+<p>{{ form.submit(class_='btn') }}</p>
+</form></div>{% endblock %}
