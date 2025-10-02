@@ -1,6 +1,5 @@
 ﻿# Ergonomics Assessment
-.[![CI](https://github.com/Rodneymondela/ergonomics-assessment/actions/workflows/ci.yml/badge.svg)](https://github.com/Rodneymondela/ergonomics-assessment/actions/workflows/ci.yml)
-..
-
 [![CI](https://github.com/Rodneymondela/ergonomics-assessment/actions/workflows/ci.yml/badge.svg)](https://github.com/Rodneymondela/ergonomics-assessment/actions/workflows/ci.yml)
+
+A Flask web app for occupational hygienists to perform comprehensive ergonomics assessments...
 
