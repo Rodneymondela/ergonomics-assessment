@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Minimal env so the app can boot during tests
+      FLASK_ENV: testing
+      SECRET_KEY: test-secret
+      SQLALCHEMY_DATABASE_URI: sqlite:///:memory:
+      UPLOAD_FOLDER: app/uploads
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Optional test-only deps; ignore if file doesn't exist
+          if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt || true; fi
+          # Make sure pytest exists
+          pip install pytest
+
+      - name: Prepare test folders
+        run: |
+          mkdir -p app/uploads
+          mkdir -p instance
+
+      - name: Run tests
+        run: pytest -q
