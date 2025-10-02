@@ -32,4 +32,7 @@ instance/
 
 # Reports/exports
 *.csv
-*.pdf*.zip
+*.pdf
+
+# Archives
+*.zip
