@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from werkzeug.security import generate_password_hash
 from sqlalchemy import text
 
-from .extensions import db, login_manager
+from .extensions import db, login_manager, csrf   # <-- add csrf here
 from .config import Config
 
 from .blueprints.auth import bp as auth_bp
@@ -18,15 +18,17 @@ from .models import user, org, ergo, media  # noqa
 
 
 def create_app(config_object: type | None = None):
-    app = Flask(__name__.split('.')[0], instance_relative_config=True)
+    app = Flask(__name__.split(".")[0], instance_relative_config=True)
     app.config.from_object(config_object or Config())
 
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
+    # --- init extensions ---
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)  # <-- enable CSRF site-wide
 
-    # Blueprints
+    # register blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(org_bp)
     app.register_blueprint(jobs_bp)
@@ -34,14 +36,22 @@ def create_app(config_object: type | None = None):
     app.register_blueprint(media_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
+    # login user loader
+    from .models.user import User
+
+    @login_manager.user_loader
+    def load_user(user_id: str):
+        try:
+            return User.query.get(int(user_id))
+        except Exception:
+            return None
+
     # ---- CLI Commands ----
     @app.cli.command("db-init")
     def db_init():
         with app.app_context():
             db.create_all()
             print("Database initialized")
-
-    from .models.user import User
 
     @app.cli.command("db-ensure-roles")
     def db_ensure_roles():
@@ -89,6 +99,6 @@ def create_app(config_object: type | None = None):
     # ---- Error handlers (INSIDE create_app) ----
     @app.errorhandler(403)
     def forbidden(e):
-        return render_template('errors/403.html'), 403
+        return render_template("errors/403.html"), 403
 
     return app

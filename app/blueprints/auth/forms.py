@@ -12,11 +12,15 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[
         DataRequired(),
-        Length(min=8, message="Password must be at least 8 characters long."),
-        Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]+$',
-               message="Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.")
+        Length(min=8, message="Password must be at least 8 characters."),
+        # Allow ANY special character, not just a small set:
+        Regexp(
+            r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$',
+            message="Must include uppercase, lowercase, a number, and a special character."
+        ),
     ])
     password2 = PasswordField(
-        'Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match.')]
+        'Confirm Password',
+        validators=[DataRequired(), EqualTo('password', message='Passwords must match.')]
     )
     submit = SubmitField('Register')

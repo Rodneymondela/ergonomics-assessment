@@ -1,9 +1,27 @@
 {% extends 'base.html' %}{% block content %}
 <div class="card"><h2>Register</h2>
-<form method="post">{{ form.csrf_token }}
-<p>{{ form.name.label }}<br>{{ form.name(size=40) }}</p>
-<p>{{ form.email.label }}<br>{{ form.email(size=40) }}</p>
-<p>{{ form.password.label }}<br>{{ form.password(size=40) }}</p>
-<p>{{ form.password2.label }}<br>{{ form.password2(size=40) }}</p>
-<p>{{ form.submit(class_='btn') }}</p>
+<form method="post">
+  {{ form.hidden_tag() }}  {# includes csrf_token and any hidden fields #}
+
+  <p>
+    {{ form.name.label }}<br>{{ form.name(size=40) }}
+    {% for err in form.name.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </p>
+
+  <p>
+    {{ form.email.label }}<br>{{ form.email(size=40) }}
+    {% for err in form.email.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </p>
+
+  <p>
+    {{ form.password.label }}<br>{{ form.password(size=40) }}
+    {% for err in form.password.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </p>
+
+  <p>
+    {{ form.password2.label }}<br>{{ form.password2(size=40) }}
+    {% for err in form.password2.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </p>
+
+  <p>{{ form.submit(class_='btn') }}</p>
 </form></div>{% endblock %}
