@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 load_dotenv()
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
+    if os.getenv("CI"):  # GitHub Actions sets CI=true
+        SECRET_KEY = "dummy-key-for-ci"
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///ergo.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "uploads")
