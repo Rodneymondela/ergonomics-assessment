@@ -38,3 +38,11 @@ instance/
 *.zip
 uploads/
 ergonomics_assessment/
+.coverage
+htmlcov/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.venv/
+__pycache__/
