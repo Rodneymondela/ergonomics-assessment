@@ -36,3 +36,5 @@ instance/
 
 # Archives
 *.zip
+uploads/
+ergonomics_assessment/
