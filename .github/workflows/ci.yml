@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'coverage.svg'
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          [ -f requirements.txt ] && pip install -r requirements.txt || true
+          pip install -e .[test]
+          pip install -r tests/requirements.txt
+
+      - name: Run tests with coverage
+        run: |
+          pytest --maxfail=1 -q --disable-warnings --cov=app --cov-report=term-missing --cov-report=xml
+
+      - name: Make badge
+        run: |
+          coverage-badge -o coverage.svg -f
+
+      - name: Publish badge to 'badges' branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan badges-temp
+          git add -f coverage.svg
+          git commit -m "chore: update coverage badge"
+          git push -f origin HEAD:badges

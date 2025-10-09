@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block content %}
+<div class="card"><h2>Annotate Media</h2>
+{% if m.media_type=='image' %}<img src="{{ url_for('media.serve', filename=m.filename) }}" style="max-width:100%;border:1px solid #e5e7eb;border-radius:8px;"/>{% endif %}
+<form method="post" style="margin-top:12px;">
+<textarea name="annotations_json" rows="6" style="width:100%" placeholder='[{"x":10,"y":20,"w":80,"h":60,"label":"awkward wrist"}]'>{{ m.annotations_json or '' }}</textarea>
+<p><button class="btn">Save</button></p>
+</form></div>{% endblock %}

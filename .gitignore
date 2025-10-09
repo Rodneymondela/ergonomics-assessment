@@ -1,0 +1,48 @@
+﻿# Python / Flask
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+*.egg-info/
+
+# Virtual envs
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config / secrets
+.env
+.flaskenv
+
+# Uploads & generated files
+app/uploads/
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Reports/exports
+*.csv
+*.pdf
+
+# Archives
+*.zip
+uploads/
+ergonomics_assessment/
+.coverage
+htmlcov/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.venv/
+__pycache__/
