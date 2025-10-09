@@ -29,7 +29,7 @@ exclude = [".venv", ".git", "build", "dist", ".mypy_cache", ".pytest_cache"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = "-ra -q --cov=app --cov-report=term-missing --no-cov-on-fail --cov-fail-under=60"
+addopts = "-ra -q --cov=app --cov-report=term-missing --no-cov-on-fail --cov-fail-under=63"
 filterwarnings = ["ignore:ast.NameConstant is deprecated:DeprecationWarning:reportlab"]
 testpaths = ["tests"]
 
