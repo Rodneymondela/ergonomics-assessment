@@ -39,20 +39,20 @@ However, the review has identified several critical areas for improvement, prima
 
 ## 5. Security Best Practices
 
-This is the area requiring the most immediate attention.
+This area required the most immediate attention, and several critical vulnerabilities have been addressed.
 
 **Strengths:**
 *   Passwords are correctly hashed using `werkzeug.security`.
 *   Role-based access control is implemented via a custom decorator in `app/security.py`.
-*   CSRF protection is likely enabled by default through `Flask-WTF`.
+*   CSRF protection is enabled by default through `Flask-WTF`.
 
-**Critical Vulnerabilities & Recommendations:**
-*   **Insecure Default `SECRET_KEY`:** The `SECRET_KEY` in `app/config.py` has a predictable default value ("change-me"). This is a critical vulnerability as it's used for session signing.
-    *   **Recommendation:** The application startup process should fail if a secure, randomly generated `SECRET_KEY` is not provided in the environment, especially in production.
-*   **Weak Demo User Credentials:** The `manage.py` script creates a demo user with a weak, hardcoded password ("demo").
-    *   **Recommendation:** Remove this command or modify it to accept a secure, randomly generated password. Default credentials are a common attack vector.
-*   **Missing Password Complexity Rules:** The registration form (`app/blueprints/auth/routes.py`) does not enforce any password complexity (length, character types, etc.).
-    *   **Recommendation:** Add validation in `RegisterForm` to enforce a strong password policy (e.g., using `wtforms.validators.Length` and custom regex validators).
+### 5.1. Resolved Security Issues
+
+The following critical vulnerabilities identified during the initial review have been fixed:
+
+*   **Insecure Default `SECRET_KEY`:** **(FIXED)** The application no longer falls back to a hardcoded default `SECRET_KEY`. It now relies solely on the environment variable, making it secure for production deployments.
+*   **Weak Demo User Credentials:** **(FIXED)** The `manage.py` script no longer creates a demo user with a weak, hardcoded password. The command now securely prompts for a password, removing this common attack vector.
+*   **Missing Password Complexity Rules:** **(FIXED)** The registration form now enforces a strong password policy, requiring minimum length and a mix of character types. A password confirmation field has also been added to improve user experience and security.
 
 ## 6. Testing Coverage and Quality
 

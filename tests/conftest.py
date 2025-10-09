@@ -8,6 +8,7 @@ def app(tmp_path):
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         UPLOAD_FOLDER = tmp_path.as_posix()
         TESTING = True
+        WTF_CSRF_ENABLED = False
     app = create_app(TestConfig)
     with app.app_context():
         _db.create_all()
