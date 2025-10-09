@@ -1,15 +1,37 @@
-<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Ergo</title><link rel="stylesheet" href="/static/styles.css"/></head>
-<body>
-<div class="nav">
-  <a href="/">Dashboard</a>
-  <a href="/company/new">New Company</a>
-  <a href="/job/new">New Job</a>
-  <a href="/assessment/new">New Assessment</a>
-  <a href="/assessments">All Assessments</a>
-  <span style="margin-left:auto;color:#cbd5e1">{% if current_user.is_authenticated %}Signed in as {{ current_user.name }} ({{ current_user.role }}){% endif %}</span>
-</div>
-<div class="container">
-{% with messages = get_flashed_messages(with_categories=true) %}{% for cat, msg in messages %}<div class="card">{{ msg }}</div>{% endfor %}{% endwith %}
-{% block content %}{% endblock %}
-</div></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Ergo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="nav">
+      <a href="/">Dashboard</a>
+      <a href="/company/new">New Company</a>
+      <a href="/job/new">New Job</a>
+      <a href="/assessment/new">New Assessment</a>
+      <a href="/assessments">All Assessments</a>
+      <span style="margin-left:auto;color:#cbd5e1">
+        {% if current_user.is_authenticated %}
+          Signed in as {{ current_user.name }} ({{ current_user.role }})
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for cat, msg in messages %}
+              <li class="flash {{ cat }}">{{ msg }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>
